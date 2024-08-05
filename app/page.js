@@ -31,14 +31,14 @@ export default function Home() {
     const docs =await getDocs(snapshot)
     const inventoryList = []
     docs.forEach((doc) => {
-      inventoryList.push({
-        name: doc.id,
-      ...doc.data(),
-      })
+      inventoryList.push({ name: doc.id, ...doc.data() })
     })
     setInventory(inventoryList)
     //connectFirestoreEmulator.log(inventoryList)
   }
+  useEffect(() => {
+    updateInventory()
+  }, [])
 
   //Method to remove items
   const removeItem = async (item) =>{
@@ -48,7 +48,7 @@ export default function Home() {
     if (docSnap.exists()) {
       //getting the quanity from the data
       const {quantity} = docSnap.data()
-      if (quanitty == 1) {
+      if (quantity == 1) {
         //deleting the quantity
         await deleteDoc(docRef)
       } else {
@@ -91,6 +91,7 @@ export default function Home() {
       justifyContent="center" 
       alignItems="center"
       gap={2}
+      bgcolor="white"
     >
       <Modal open={open} anClose={handleClose}>
         <Box
@@ -132,6 +133,7 @@ export default function Home() {
       </Modal>
       <Button 
       variant="contained"
+      color="secondary"
       onClick={()=> {
           handleOpen()
         }}
@@ -147,7 +149,7 @@ export default function Home() {
         justifyContent="center">
           <Typography variant="h2" color="#1b3f4c">Inventory Items</Typography>
         </Box>
-      <Stack width="800px" height="300px" spacing={2} overflow="auto">
+      <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
           {
             inventory.map(({name, quantity})=> (
               <Box 
@@ -156,25 +158,35 @@ export default function Home() {
               minHeight="150px"
               display="flex"
               alignItems="center"
-              justifyContent="center"
-              bgColor="#f0f0f0"
+              justifyContent="space-between"
+              bgColor="#f0f0"
               padding={5}
             >
-              <Typography variant='h3' color='#bbf9c0' textAlign='center'
+              <Typography variant='h3' color='#1b3f4c' textAlign='center'
               >
                   {name.charAt(0).toUpperCase() + name.slice(1)}
               </Typography>
-              <Typography variant='h3' color='#bbf9c0' textAlign='center'
+              <Typography variant='h3' color='#1b3f4c' textAlign='center'
               >
                   {quantity}
               </Typography>
-              <Button 
-                variant="contained" 
-                onClick={()=>{
-                  removeItem(name)
-                }}
-              >Remove
-              </Button>
+              <Stack direction="row" spacing ={2}>
+                <Button
+                  variant="contained"
+                  color="success" 
+                  onClick={()=>{
+                    addItem(name)
+                  }}
+                >Add</Button>
+                <Button 
+                  variant="contained"
+                  color="error" 
+                  onClick={()=>{
+                    removeItem(name)
+                  }}
+                >Remove
+                </Button>
+              </Stack>
             </Box>
             ))}
       </Stack>
